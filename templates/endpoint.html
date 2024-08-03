@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spock :: Endpoint: {{ endpoint_id }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Endpoint: {{ endpoint_id }}</h1>
+        <a href="/" class="btn btn-secondary mb-3">Back to Home</a>
+        
+        <h2>How to use this endpoint</h2>
+        <p>Send requests to: <code>{{ endpoint_url }}</code></p>
+        <h3>Example curl commands:</h3>
+        <pre><code>
+# GET request
+curl {{ endpoint_url }}
+
+# POST request with JSON data
+curl -X POST -H "Content-Type: application/json" -d '{"key": "value"}' {{ endpoint_url }}
+
+# POST request with form data
+curl -X POST -d "param1=value1&param2=value2" {{ endpoint_url }}
+
+# PUT request
+curl -X PUT -H "Content-Type: application/json" -d '{"key": "new_value"}' {{ endpoint_url }}
+
+# DELETE request
+curl -X DELETE {{ endpoint_url }}
+        </code></pre>
+        
+        <h2 class="mt-4">Received Requests</h2>
+        <ul class="list-group">
+            {% for request in requests %}
+                <li class="list-group-item">
+                    <h5>{{ request.timestamp }} - {{ request.method }}</h5>
+                    <button class="btn btn-sm btn-info" onclick="toggleDetails(this)">Toggle Details</button>
+                    <div class="request-details" style="display: none;">
+                        <h6>Headers:</h6>
+                        <pre>{{ request.headers | tojson(indent=2) }}</pre>
+                        <h6>Query Parameters:</h6>
+                        <pre>{{ request.args | tojson(indent=2) }}</pre>
+                        <h6>Form Data:</h6>
+                        <pre>{{ request.form | tojson(indent=2) }}</pre>
+                        <h6>JSON Data:</h6>
+                        <pre>{{ request.json | tojson(indent=2) }}</pre>
+                        <h6>Raw Data:</h6>
+                        <pre>{{ request.data }}</pre>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleDetails(button) {
+            const details = button.nextElementSibling;
+            details.style.display = details.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>
