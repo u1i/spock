@@ -23,7 +23,7 @@ Spock is a powerful, easy-to-use tool for inspecting and debugging API requests 
 ## Usage
 
 1. Start the Spock server:
-   `python app.py`
+   `gunicorn --bind 0.0.0.0:8080 wsgi:app`
 
 2. Open your web browser and navigate to http://localhost:8080
 

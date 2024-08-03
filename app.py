@@ -57,5 +57,5 @@ def view_endpoint(endpoint_id):
                            endpoint_url=endpoint_url,
                            host=host)
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8080)
+#if __name__ == '__main__':
+#    app.run(debug=True, host='0.0.0.0', port=8080)
