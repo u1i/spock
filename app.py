@@ -1,27 +1,37 @@
 from flask import Flask, request, jsonify, render_template
+from urllib.parse import urlparse, urlunparse
 import uuid
 import datetime
 import requests
-from urllib.parse import urlparse
 
-app = Flask(__name__)  # This line was missing
+app = Flask(__name__)
 
 # In-memory storage (replace with a database in a production environment)
 endpoints = {}
 
 def get_public_url():
-    try:
-        # Try to get the ngrok public URL
-        ngrok_tunnel = requests.get("http://localhost:4040/api/tunnels").json()
-        ngrok_url = ngrok_tunnel['tunnels'][0]['public_url']
-        return ngrok_url  # This will include the correct protocol (http or https)
-    except:
-        # If ngrok is not running, fall back to the request's host
-        if request.is_secure:
-            protocol = 'https'
-        else:
-            protocol = 'http'
-        return f"{protocol}://{request.host}"
+    # Start with assuming the request's own scheme and host
+    scheme = request.scheme
+    host = request.host
+
+    # Check for common headers that indicate HTTPS
+    if any(request.headers.get(header) for header in [
+        'X-Forwarded-Proto',
+        'X-Forwarded-Ssl',
+        'X-Url-Scheme',
+    ]) == 'https':
+        scheme = 'https'
+
+    # Check for cloud provider headers
+    for header in ['X-Forwarded-Host', 'X-Original-Host', 'Host']:
+        if header in request.headers:
+            host = request.headers[header]
+            break
+
+    # Construct the base URL
+    base_url = urlunparse((scheme, host, '', '', '', ''))
+    
+    return base_url
 
 @app.route('/')
 def index():
@@ -60,9 +70,8 @@ def view_endpoint(endpoint_id):
     if endpoint_id not in endpoints:
         return "Endpoint not found", 404
     
-    public_url = get_public_url()
-    parsed_url = urlparse(public_url)
-    endpoint_url = f"{parsed_url.scheme}://{parsed_url.netloc}/endpoint/{endpoint_id}"
+    base_url = get_public_url()
+    endpoint_url = f"{base_url}/endpoint/{endpoint_id}"
     
     return render_template('endpoint.html', 
                            endpoint_id=endpoint_id, 
