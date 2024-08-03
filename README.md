@@ -1,4 +1,4 @@
-# Spock: API Request Inspector
+# Spock: API Request Inspector 🖖🏽
 
 Spock is a powerful, easy-to-use tool for inspecting and debugging API requests and webhooks. It provides a simple web interface for creating custom endpoints and examining incoming HTTP requests in real-time.
 
