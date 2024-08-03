@@ -1,27 +1,14 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, url_for
 import uuid
 import datetime
-import requests
-from urllib.parse import urlparse
 
-app = Flask(__name__)  # This line was missing
+app = Flask(__name__)
 
 # In-memory storage (replace with a database in a production environment)
 endpoints = {}
 
-def get_public_url():
-    try:
-        # Try to get the ngrok public URL
-        ngrok_tunnel = requests.get("http://localhost:4040/api/tunnels").json()
-        ngrok_url = ngrok_tunnel['tunnels'][0]['public_url']
-        return ngrok_url  # This will include the correct protocol (http or https)
-    except:
-        # If ngrok is not running, fall back to the request's host
-        if request.is_secure:
-            protocol = 'https'
-        else:
-            protocol = 'http'
-        return f"{protocol}://{request.host}"
+def get_host():
+    return request.host
 
 @app.route('/')
 def index():
@@ -47,6 +34,7 @@ def capture_request(endpoint_id):
         'data': request.get_data(as_text=True)
     }
     
+    # Try to parse JSON if the content type is application/json
     if request.is_json:
         request_data['json'] = request.get_json(silent=True)
     else:
@@ -60,14 +48,14 @@ def view_endpoint(endpoint_id):
     if endpoint_id not in endpoints:
         return "Endpoint not found", 404
     
-    public_url = get_public_url()
-    parsed_url = urlparse(public_url)
-    endpoint_url = f"{parsed_url.scheme}://{parsed_url.netloc}/endpoint/{endpoint_id}"
+    host = get_host()
+    endpoint_url = url_for('capture_request', endpoint_id=endpoint_id, _external=True)
     
     return render_template('endpoint.html', 
                            endpoint_id=endpoint_id, 
                            requests=endpoints[endpoint_id], 
-                           endpoint_url=endpoint_url)
+                           endpoint_url=endpoint_url,
+                           host=host)
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8080)
+#if __name__ == '__main__':
+#    app.run(debug=True, host='0.0.0.0', port=8080)
