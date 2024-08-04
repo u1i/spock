@@ -39,7 +39,7 @@ To use Spock with HTTPS:
 
 1. Install ngrok from https://ngrok.com/download
 
-2. Start Spock as usual
+2. Start Spock, and set the HTTPS flag `USE_HTTPS=true gunicorn --bind 0.0.0.0:8080 wsgi:app`
 
 3. In a new terminal window, run:
    ngrok http 8080
