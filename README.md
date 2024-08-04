@@ -2,6 +2,8 @@
 
 Spock is a powerful, easy-to-use tool for inspecting and debugging API requests and webhooks. It provides a simple web interface for creating custom endpoints and examining incoming HTTP requests in real-time.
 
+![](s1.png)
+
 ## Features
 
 - Create custom endpoints on the fly
@@ -19,6 +21,7 @@ Spock is a powerful, easy-to-use tool for inspecting and debugging API requests 
 
 2. Install the required dependencies:
    `pip install -r requirements.txt`
+   
 
 ## Usage
 
@@ -33,6 +36,12 @@ Spock is a powerful, easy-to-use tool for inspecting and debugging API requests 
 
 5. Watch incoming requests appear in real-time on the Spock interface
 
+## Docker Image
+
+[Docker Hub](https://hub.docker.com/r/u1ih/spock)
+
+`docker run -d -p 8080:8080 u1ih/spock`
+
 ## HTTPS Support with ngrok
 
 To use Spock with HTTPS:
@@ -45,6 +54,8 @@ To use Spock with HTTPS:
    ngrok http 8080
 
 4. Use the HTTPS URL provided by ngrok for your API calls
+
+Or use caddy & docker-compose.
 
 ## Contributing
 
