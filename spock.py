@@ -60,5 +60,11 @@ def view_endpoint(endpoint_id):
                            requests=endpoints[endpoint_id], 
                            endpoint_url=endpoint_url)
 
+@spock.route('/delete_all_endpoints', methods=['DELETE'])
+def delete_all_endpoints():
+    global endpoints
+    endpoints.clear()
+    return jsonify({'message': 'All endpoints have been deleted'}), 200
+
 if __name__ == '__main__':
     spock.run(debug=True, host='0.0.0.0', port=8080)
